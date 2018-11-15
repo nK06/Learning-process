@@ -1,2 +1,2 @@
-# vue-music
+# learn project
 vue
