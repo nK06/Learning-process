@@ -28,6 +28,6 @@ module.exports = {
     'arrow-parens':0,
     'eol-last':0,
     'space-before-function-paren':0,
-    'indent': 0
+    'indent': 0,
   }
 }
