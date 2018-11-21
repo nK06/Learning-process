@@ -1,6 +1,6 @@
 <template>
   <div class="singer">
-    <listview :data="singers"></listview>
+    <listview @select="selectSinger" :data="singers"></listview>
     <router-view></router-view>
   </div>
 </template>
@@ -11,6 +11,9 @@
   import {isChinese, getPinYinFirstCharacter} from 'common/js/pinyin'
   import Singer from 'common/js/singer'
   import Listview from 'base/listview/listview'
+
+  // vuex 语法糖 在methods 中申明和 mutations-types的映射
+  import {mapMutations} from 'vuex'
 
   const HOT_NAME = '热门'
   const HOT_SINGER_LENGTH = 10
@@ -24,6 +27,13 @@
       this._getSingerList()
     },
     methods: {
+      selectSinger(singer) {
+        this.$router.push({
+          path: `/singer/${singer.mid}`
+        })
+        // 这一步就实现了对一个mutation的提交,相当于在state中放了一些数据，这里是singer的信息，在singer-detail 中就可以获取到
+        this.setSinger(singer)
+      },
       _getSingerList() {
         getSingerList().then((res) => {
           if (res.code === ERR_OK) {
@@ -84,7 +94,11 @@
         })
 
         return hot.concat(ret)
-      }
+      },
+      // setSinger 跟Mutations-types 中的 SET_SINGER 做映射
+      ...mapMutations({
+        setSinger: 'SET_SINGER'
+      })
     },
     components: {
       Listview

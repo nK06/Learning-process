@@ -70,7 +70,23 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
         axios.get(url, {
           headers: {
-            referer: 'https://y.qq.com/portal/singer_list.html',
+            //referer: 'https://y.qq.com/portal/singer_list.html',
+            referer: 'https://y.qq.com/',
+            authority: 'u.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          res.json(response.data)
+        }).catch((e) => {
+          console.log(e)
+        })
+      }),
+      apiRoutes.get('/api/getSingerDetail', function (req, res) {
+        const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg'
+        axios.get(url, {
+          headers: {
+            // referer: 'https://y.qq.com/n/yqq/singer/001fNHEf1SFEFN.html',
+            referer: 'https://y.qq.com/n/yqq/',
             authority: 'u.y.qq.com'
           },
           params: req.query

@@ -1,4 +1,5 @@
 import {commonParams} from './config'
+// import jsonp from 'common/js/jsonp'
 import axios from 'axios'
 
 export function getSingerList() {
@@ -27,6 +28,28 @@ export function getSingerList() {
         }
       }
     }
+  })
+  // 使用了axios 伪装请求
+  return axios.get(url, {
+    params: data
+  }).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}
+
+// 获取歌手详情数据
+export function getSingerDetail(singerId) {
+  const url = 'api/getSingerDetail'
+  const data = Object.assign({}, commonParams, {
+    hostUin: 0,
+    format: 'jsonp',
+    platform: 'yqq',
+    needNewCode: 0,
+    order: 'listen',
+    begin: 0,
+    num: 100,
+    songstatus: 1,
+    singermid: singerId
   })
   // 使用了axios 伪装请求
   return axios.get(url, {
