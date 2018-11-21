@@ -6,7 +6,7 @@
 
 <script type="text/ecmascript-6">
   import {mapGetters} from 'vuex'
-  import {getSingerDetail} from 'api/singer'
+  import {getSingerDetail, getMusicPurl} from 'api/singer'
   import {ERR_OK} from 'api/config'
   import {createSong} from 'common/js/song'
   import MusicList from 'components/music-list/music-list'
@@ -40,19 +40,30 @@
         }
         getSingerDetail(this.singer.mid).then((res) => {
           if (res.code === ERR_OK) {
-            this.songs = this._normalizeSongs(res.data.list)
+            this._normalizeSongs(res.data.list)
           }
         })
       },
       _normalizeSongs(list) {
         let ret = []
+        let promiseArr = []
         list.forEach((item) => {
           let {musicData} = item
           if (musicData.songid && musicData.albummid) {
-            ret.push(createSong(musicData))
+            let promise = getMusicPurl(musicData.songmid)
+            promiseArr.push(promise)
+            promise.then((res) => {
+              if (res.code === ERR_OK) {
+                // 获取vKey 数据
+                const songVkey = res.req_0.data.midurlinfo[0].purl
+                ret.push(createSong(musicData, songVkey))
+              }
+            })
           }
         })
-        return ret
+        Promise.all(promiseArr).then(() => {
+          this.songs = ret
+        })
       }
     },
     components: {

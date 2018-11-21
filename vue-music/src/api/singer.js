@@ -58,3 +58,23 @@ export function getSingerDetail(singerId) {
     return Promise.resolve(res.data)
   })
 }
+
+// 获取歌曲播放的的vkey
+export function getMusicPurl(songmId) {
+  const url = 'api/getMusicPurl'
+  const data = Object.assign({}, commonParams, {
+    hostUin: 0,
+    format: 'jsonp',
+    platform: 'yqq',
+    loginUin: 0,
+    needNewCode: 0,
+    guid: '2473435457',
+    data: `{"req":{"module":"CDN.SrfCdnDispatchServer","method":"GetCdnDispatch","param":{"guid":"2473435457","calltype":0,"userip":""}},"req_0":{"module":"vkey.GetVkeyServer","method":"CgiGetVkey","param":{"guid":"2473435457","songmid":["${songmId}"],"songtype":[0],"uin":"0","loginflag":1,"platform":"20"}},"comm":{"uin":0,"format":"json","ct":20,"cv":0}}`
+  })
+  // 使用了axios 伪装请求
+  return axios.get(url, {
+    params: data
+  }).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}

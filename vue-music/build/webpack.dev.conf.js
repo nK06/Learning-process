@@ -81,12 +81,28 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(e)
         })
       }),
+        // 歌曲详情
       apiRoutes.get('/api/getSingerDetail', function (req, res) {
         const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg'
         axios.get(url, {
           headers: {
             // referer: 'https://y.qq.com/n/yqq/singer/001fNHEf1SFEFN.html',
             referer: 'https://y.qq.com/n/yqq/',
+            authority: 'u.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          res.json(response.data)
+        }).catch((e) => {
+          console.log(e)
+        })
+      })
+      // 获取歌曲vKey
+      apiRoutes.get('/api/getMusicPurl', function (req, res) {
+        const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
+        axios.get(url, {
+          headers: {
+            referer: 'https://y.qq.com/portal/',
             authority: 'u.y.qq.com'
           },
           params: req.query
