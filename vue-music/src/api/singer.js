@@ -42,7 +42,7 @@ export function getSingerDetail(singerId) {
   const url = 'api/getSingerDetail'
   const data = Object.assign({}, commonParams, {
     hostUin: 0,
-    format: 'jsonp',
+    format: 'json',
     platform: 'yqq',
     needNewCode: 0,
     order: 'listen',
@@ -64,7 +64,7 @@ export function getMusicPurl(songmId) {
   const url = 'api/getMusicPurl'
   const data = Object.assign({}, commonParams, {
     hostUin: 0,
-    format: 'jsonp',
+    format: 'json',
     platform: 'yqq',
     loginUin: 0,
     needNewCode: 0,
