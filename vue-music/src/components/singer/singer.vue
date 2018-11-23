@@ -1,6 +1,6 @@
 <template>
-  <div class="singer">
-    <listview @select="selectSinger" :data="singers"></listview>
+  <div class="singer" ref="singer">
+    <listview @select="selectSinger" :data="singers" ref="list"></listview>
     <router-view></router-view>
   </div>
 </template>
@@ -11,6 +11,7 @@
   import {isChinese, getPinYinFirstCharacter} from 'common/js/pinyin'
   import Singer from 'common/js/singer'
   import Listview from 'base/listview/listview'
+  import {playlistMixin} from 'common/js/mixin'
 
   // vuex 语法糖 在methods 中申明和 mutations-types的映射
   import {mapMutations} from 'vuex'
@@ -18,6 +19,7 @@
   const HOT_NAME = '热门'
   const HOT_SINGER_LENGTH = 10
   export default {
+    mixins: [playlistMixin],
     data() {
       return {
         singers: []
@@ -27,6 +29,11 @@
       this._getSingerList()
     },
     methods: {
+      handlePlayList(playlist) {
+        const bottom = playlist.length > 0 ? '60px' : ''
+        this.$refs.singer.style.bottom = bottom
+        this.$refs.list.refresh()
+      },
       selectSinger(singer) {
         this.$router.push({
           path: `/singer/${singer.mid}`

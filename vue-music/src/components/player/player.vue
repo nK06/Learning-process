@@ -1,5 +1,3 @@
-import {playList} from "../../store/getters";
-import {playList} from "../../store/getters";
 <template>
   <div class="player" v-show="playList.length>0">
     <!--@定义的是vue 的css 钩子函数 需要在methods定义-->
@@ -30,6 +28,9 @@ import {playList} from "../../store/getters";
               <div class="cd" :class="cdCls">
                 <img class="image" :src="currentSong.image"/>
               </div>
+            </div>
+            <div class="playing-lyric-wrapper">
+              <div class="playing-lyric">{{playingLyric}}</div>
             </div>
           </div>
           <scroll class="middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
@@ -123,7 +124,8 @@ import {playList} from "../../store/getters";
         radius: 32,
         currentLyric: null,
         currentLineNum: 0,
-        currentDotShow: 'cd'
+        currentDotShow: 'cd',
+        playingLyric: ''
       }
     },
     computed: {
@@ -212,6 +214,9 @@ import {playList} from "../../store/getters";
           return
         }
         this.setPlayingState(!this.playing)
+        if (this.currentLyric) {
+          this.currentLyric.togglePlay()
+        }
       },
       end() {
         if (this.mode === playMode.loop) {
@@ -224,34 +229,46 @@ import {playList} from "../../store/getters";
       loop() {
         this.$refs.audio.currentTime = 0
         this.$refs.audio.play()
+        // 单曲循环的时候需要歌词重置回初始行
+        if (this.currentLyric) {
+          this.currentLyric.seek()
+        }
       },
       next() {
         if (!this.songReady) {
           return
         }
-        let index = this.currentIndex + 1
-        if (index === this.playList.length) {
-          index = 0
+        if (this.playList.length === 1) {
+          this.loop()
+        } else {
+          let index = this.currentIndex + 1
+          if (index === this.playList.length) {
+            index = 0
+          }
+          this.setCurrentIndex(index)
+          if (!this.playing) {
+            this.togglePlaying()
+          }
+          this.songReady = false
         }
-        this.setCurrentIndex(index)
-        if (!this.playing) {
-          this.togglePlaying()
-        }
-        this.songReady = false
       },
       prev() {
         if (!this.songReady) {
           return
         }
-        let index = this.currentIndex - 1
-        if (index === -1) {
-          index = this.playList.length - 1
+        if (this.playList.length === 1) {
+          this.loop()
+        } else {
+          let index = this.currentIndex + 1
+          if (index === this.playList.length) {
+            index = 0
+          }
+          this.setCurrentIndex(index)
+          if (!this.playing) {
+            this.togglePlaying()
+          }
+          this.songReady = false
         }
-        this.setCurrentIndex(index)
-        if (!this.playing) {
-          this.togglePlaying()
-        }
-        this.songReady = false
       },
       // audio 组件派发的事件 ，歌曲加载会调用
       ready() {
@@ -272,9 +289,14 @@ import {playList} from "../../store/getters";
         return `${minute}:${second}`
       },
       onProgressBarChange(percent) {
-        this.$refs.audio.currentTime = this.currentSong.duration * percent
+        const currentTime = this.currentSong.duration * percent
+        this.$refs.audio.currentTime = currentTime
         if (!this.playing) {
           this.togglePlaying()
+        }
+        // 进度条改变时歌词也需要同步到播放行
+        if (this.currentLyric) {
+          this.currentLyric.seek(currentTime * 1000)
         }
       },
       changeMode() {
@@ -303,6 +325,10 @@ import {playList} from "../../store/getters";
           if (this.playing) {
             this.currentLyric.play()
           }
+        }).catch(() => {
+          this.currentLyric = null
+          this.playingLyric = ''
+          this.currentLineNum = 0
         })
       },
       // 回调函数
@@ -314,6 +340,7 @@ import {playList} from "../../store/getters";
         } else {
           this.$refs.lyricList.scrollTo(0, 0, 1000)
         }
+        this.playingLyric = txt
       },
       middleTouchStart(e) {
         this.touch.initiated = true
@@ -368,7 +395,7 @@ import {playList} from "../../store/getters";
         const time = 300
         // 控制歌词区块的偏移
         this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px,0,0)`
-        this.$refs.lyricList.$el.style[transitionDuration] = `${time}`
+        this.$refs.lyricList.$el.style[transitionDuration] = `${time}` // 设置动画时间
         // 设置cd 页面的透明度
         this.$refs.middleL.style.opacity = opacity
         this.$refs.middleL.style[transitionDuration] = `${time}`
@@ -407,15 +434,19 @@ import {playList} from "../../store/getters";
     },
     watch: {
       currentSong(newSong, oldSong) {
-        // 延时
         if (newSong.id === oldSong.id) {
           return
         }
-        this.$nextTick(() => {
+        // 切歌之后需要停止之前的 Lyric计时器
+        if (this.currentLyric) {
+          this.currentLyric.stop()
+        }
+        // audio组件可能报警告。加一个延时方法包裹起来
+        setTimeout(() => {
           this.$refs.audio.play()
           // 获取歌词
           this.getLyric()
-        })
+        }, 1000)
       },
       playing(newPlaying) {
         const audio = this.$refs.audio

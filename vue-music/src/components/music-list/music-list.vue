@@ -31,6 +31,7 @@
   import {prefixStyle} from 'common/js/dom'
   import loading from 'base/loading/loading'
   import {mapActions} from 'vuex'
+  import {playlistMixin} from 'common/js/mixin'
 
   const transform = prefixStyle('transform')
   const backdrop = prefixStyle('backdrop-filter')
@@ -38,6 +39,7 @@
   // 预留的list滚动偏移量，即顶部保留的部分高度
   const RESERVED_HEIGHT = 40
   export default {
+    mixins: [playlistMixin],
     props: {
       bgImage: {
         type: String,
@@ -72,6 +74,12 @@
       this.$refs.list.$el.style.top = `${this.$refs.bgImage.clientHeight}px`
     },
     methods: {
+      // 播放状态下有mini player 需要将scroll 组件底部上移
+      handlePlayList(playlist) {
+        const bottom = playlist.length > 0 ? '60px' : ''
+        this.$refs.list.$el.style.bottom = bottom
+        this.$refs.list.refresh()
+      },
       scroll(pos) {
         this.scrollY = pos.y
       },
