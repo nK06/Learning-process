@@ -1,47 +1,52 @@
 <template>
-  <!-- 左滑动画 -->
   <transition name="slide">
-    <music-list :title="title" :bg-image="bgImage" :songs="songs"></music-list>
+    <music-list :rank="rank" :title="title" :bg-image="bgImage" :songs="songs"></music-list>
   </transition>
 </template>
 
-<script type="text/ecmascript-6">
+<script>
   import MusicList from 'components/music-list/music-list'
   import {mapGetters} from 'vuex'
-  import {getSongList} from 'api/recommend'
+  import {getMusicList} from 'api/rank'
   import {ERR_OK} from 'api/config'
   import {getMusicPurl} from 'api/singer'
   import {createSong} from 'common/js/song'
 
   export default {
+    created() {
+      this._getMusicList()
+    },
     computed: {
       title() {
-        return this.disc.dissname
+        return this.topList.topTitle
       },
       bgImage() {
-        return this.disc.imgurl
+        if (this.songs.length) {
+          return this.songs[0].image
+        }
+        return ''
+        // return this.topList.picUrl
       },
+      // vuex 的getters 最终映射到的是computde 方法
       ...mapGetters([
-        'disc'
+        'topList'
       ])
     },
     data() {
       return {
-        songs: []
+        songs: [],
+        rank: true
       }
     },
-    created() {
-      this._getDiscSongList()
-    },
     methods: {
-      _getDiscSongList() {
-        if (!this.disc.dissid) {
-          this.$router.push('/recommend')
+      _getMusicList() {
+        if (!this.topList.id) {
+          this.$router.push('/rank')
           return
         }
-        getSongList(this.disc.dissid).then((res) => {
+        getMusicList(this.topList.id).then((res) => {
           if (res.code === ERR_OK) {
-            this._normalizeSongs(res.cdlist[0].songlist)
+            this._normalizeSongs(res.songlist)
           }
         })
       },
@@ -49,7 +54,7 @@
         let ret = []
         let promiseArr = []
         list.forEach((item) => {
-          let musicData = item
+          let musicData = item.data
           if (musicData.songid && musicData.albummid) {
             let promise = getMusicPurl(musicData.songmid)
             promiseArr.push(promise)
@@ -74,5 +79,9 @@
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus" type="text/stylus">
+  .slide-enter-active, .slide-leave-active
+    transition: all 0.3s ease
 
+  .slide-enter, .slide-leave-to
+    transform: translate3d(100%, 0, 0)
 </style>

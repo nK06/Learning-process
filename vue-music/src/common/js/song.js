@@ -1,6 +1,7 @@
 import {getSongLyric} from 'api/song'
 import {ERR_OK} from 'api/config'
 import {Base64} from 'js-base64'
+import {songUrlPrefix} from './config'
 
 export default class Song {
   constructor({id, mid, singer, name, album, duration, image, url}) {
@@ -41,9 +42,16 @@ export function createSong(musicData, songVkey) {
     album: musicData.albumname,
     duration: musicData.interval,
     image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.albummid}.jpg?max_age=2592000`,
-    url: `http://dl.stream.qqmusic.qq.com/${songVkey}`
+    url: `${songUrlPrefix}${songVkey}`
     // url: `http://dl.stream.qqmusic.qq.com/C400${musicData.songmid}.m4a?vkey=${songVkey}&guid=7981028948&uin=0&fromtag=66`
   })
+}
+
+export function addSongVkey(song, songVkeyUrl) {
+  if (song.id && song.mid) {
+    song.url = songVkeyUrl
+    return song
+  }
 }
 
 /**
@@ -51,7 +59,7 @@ export function createSong(musicData, songVkey) {
  * @param singer
  * @returns {string}
  */
-function filterSinger(singer) {
+export function filterSinger(singer) {
   let ret = []
   if (!singer) {
     return ''

@@ -36,3 +36,28 @@ export function getDiscList() {
     return Promise.resolve(res.data)
   })
 }
+
+// 获取歌单歌曲信息
+export function getSongList(disstid) {
+  const url = '/api/getSongList'
+  const data = Object.assign({}, commonParams, {
+    platform: 'yqq',
+    onlysong: 0,
+    type: 1,
+    json: 1,
+    utf8: 1,
+    disstid: disstid,
+    loginUin: 0,
+    hostUin: 0,
+    inCharset: 'utf8',
+    outCharset: 'utf-8',
+    needNewCode: 0,
+    format: 'json'
+  })
+  // 使用了axios 伪装请求
+  return axios.get(url, {
+    params: data
+  }).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}

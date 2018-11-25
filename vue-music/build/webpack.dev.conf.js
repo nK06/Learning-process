@@ -36,6 +36,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         { from: /.*/, to: path.posix.join(config.dev.assetsPublicPath, 'index.html') },
       ],
     },
+    disableHostCheck: true, // 关闭host检查  NATAPP 采用内网穿透访问 127.0.0.1 会报错
     hot: true,
     contentBase: false, // since we use CopyWebpackPlugin.
     compress: true,
@@ -131,6 +132,85 @@ const devWebpackConfig = merge(baseWebpackConfig, {
             }
           }
           res.json(ret)
+        }).catch((e) => {
+          console.log(e)
+        })
+      })
+
+      // 获取推荐歌单歌曲信息
+      apiRoutes.get('/api/getSongList', function (req, res) {
+        const url = 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
+        axios.get(url, {
+          headers: {
+            referer: 'https://y.qq.com/n/yqq/playlist/',
+            authority: 'u.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          res.json(response.data)
+        }).catch((e) => {
+          console.log(e)
+        })
+      }),
+
+      // 获取排行榜数据
+      apiRoutes.get('/api/getTopList', function (req, res) {
+        const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_myqq_toplist.fcg'
+        axios.get(url, {
+          headers: {
+            referer: 'https://m.y.qq.com/',
+            authority: 'u.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          res.json(response.data)
+        }).catch((e) => {
+          console.log(e)
+        })
+      }),
+      // 获取推荐歌单歌曲数据
+      apiRoutes.get('/api/getMusicList', function (req, res) {
+        const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_toplist_cp.fcg'
+        axios.get(url, {
+          headers: {
+            referer: 'https://y.qq.com/w/toplist.html?ADTAG=myqq&from=myqq&channel=10007100&id=4&type=top',
+            authority: 'u.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          res.json(response.data)
+        }).catch((e) => {
+          console.log(e)
+        })
+      }),
+
+      // 获取热门搜索词条数据
+      apiRoutes.get('/api/getHotKey', function (req, res) {
+        const url = 'https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg'
+        axios.get(url, {
+          headers: {
+            referer: 'https://y.qq.com/m/index.html',
+            authority: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          res.json(response.data)
+        }).catch((e) => {
+          console.log(e)
+        })
+      }),
+
+      // 获取搜索结果
+      apiRoutes.get('/api/search', function (req, res) {
+        const url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
+        axios.get(url, {
+          headers: {
+            referer: 'https://y.qq.com/m/index.html',
+            authority: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          res.json(response.data)
         }).catch((e) => {
           console.log(e)
         })

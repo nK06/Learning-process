@@ -7,3 +7,5 @@ export const playMode = {
   loop: 1,
   random: 2
 }
+
+export const songUrlPrefix = 'http://dl.stream.qqmusic.qq.com/'

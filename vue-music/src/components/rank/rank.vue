@@ -1,14 +1,14 @@
 <template>
   <div class="rank" ref="rank">
-    <scroll :data="topList" class="toplist" ref="toplist">
+    <scroll :data="topList" class="toplist" ref="topList">
       <ul>
-        <li class="item" v-for="(item, index) in topList" :key="index" @click="selectItem(item)">
+        <li class="item" v-for="item in topList" :key="item.id" @click="selectItem(item)">
           <div class="icon">
             <img width="100" height="100" v-lazy="item.picUrl"/>
           </div>
           <ul class="songlist">
-            <li class="song" v-for="(song, indexInner) in item.songList" :key="indexInner">
-              <span>{{indexInner + 1}}</span>
+            <li class="song" v-for="(song, index) in item.songList" :key="index">
+              <span>{{index + 1}}</span>
               <span>{{song.songname}}-{{song.singername}}</span>
             </li>
           </ul>
@@ -21,6 +21,54 @@
     <router-view></router-view>
   </div>
 </template>
+<script type="text/ecmascript-6">
+  import {getTopList} from 'api/rank'
+  import {ERR_OK} from 'api/config'
+  import Scroll from 'base/scroll/scroll'
+  import Loading from 'base/loading/loading'
+  import {playlistMixin} from 'common/js/mixin'
+  import {mapMutations} from 'vuex'
+
+  export default {
+    mixins: [playlistMixin],
+    created() {
+      this._getTopList()
+    },
+    data() {
+      return {
+        topList: []
+      }
+    },
+    methods: {
+      // 播放状态下有mini player 需要将scroll 组件底部上移
+      handlePlayList(playlist) {
+        const bottom = playlist.length > 0 ? '60px' : ''
+        this.$refs.rank.style.bottom = bottom
+        this.$refs.topList.refresh()
+      },
+      selectItem(item) {
+        this.$router.push({
+          path: `/rank/${item.id}`
+        })
+        this.setTopList(item)
+      },
+      _getTopList() {
+        getTopList().then((res) => {
+          if (res.code === ERR_OK) {
+            this.topList = res.data.topList
+          }
+        })
+      },
+      ...mapMutations({
+        setTopList: 'SET_TOP_LIST'
+      })
+    },
+    components: {
+      Scroll,
+      Loading
+    }
+  }
+</script>
 <style lang="stylus" rel="stylesheet/stylus" type="text/stylus">
   @import "~common/stylus/variable"
   @import "~common/stylus/mixin"
