@@ -12,9 +12,14 @@
     <artifactId>security-demo</artifactId>
 
     <dependencies>
+        <!--<dependency>-->
+            <!--<groupId>com.panther</groupId>-->
+            <!--<artifactId>security-browser</artifactId>-->
+            <!--<version>${com.panther.security.version}</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>com.panther</groupId>
-            <artifactId>security-browser</artifactId>
+            <artifactId>security-app</artifactId>
             <version>${com.panther.security.version}</version>
         </dependency>
         <dependency>

@@ -34,3 +34,9 @@ panther:
 #        url: /user/*
 server:
   port: 9001
+security:
+  oauth2:
+    client:
+      client-id: app
+      client-secret: app
+      pre-established-redirect-uri: https://baidu.com

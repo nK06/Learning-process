@@ -37,13 +37,6 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
     @Autowired
     private SmsCodeAuthenticationSecurityConfig smsCodeAuthenticationSecurityConfig;
 
-
-    // security 5.0 新增了password 加密模式
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
-
     /***
      * SpringSecurity 的rememberme Token 需存放到数据库
      * @return

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 public class MyUserDetailsService implements UserDetailsService , SocialUserDetailsService {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -40,7 +41,7 @@ public class MyUserDetailsService implements UserDetailsService , SocialUserDeta
         // 根据查找到的用户信息判断用户是否被冻结
         // 这里实际开发 放的值是数据库的加密后的密码
         return new SocialUser(userId, passwordEncoder.encode("123"),
-                true,true,true,true, AuthorityUtils.commaSeparatedStringToAuthorityList("admin"));
+                true,true,true,true, AuthorityUtils.commaSeparatedStringToAuthorityList("admin,ROLE_USER"));
     }
 }
 

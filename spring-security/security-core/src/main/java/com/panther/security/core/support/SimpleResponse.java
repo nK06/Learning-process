@@ -1,4 +1,4 @@
-package com.panther.security.browser.support;
+package com.panther.security.core.support;
 
 public class SimpleResponse {
 

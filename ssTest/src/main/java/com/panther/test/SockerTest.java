@@ -16,6 +16,7 @@ public class SockerTest {
         System.out.println(address.getHostAddress());
         System.out.println(new String(address.getAddress(),"UTF-8"));
 
+        System.out.println(3 | 9);
     }
 
 }

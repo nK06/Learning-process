@@ -12,7 +12,7 @@ import org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository;
 import javax.sql.DataSource;
 
 @Configuration
-@EnableSocial
+//@EnableSocial
 public class SocialConfig extends SocialConfigurerAdapter {
 
     @Autowired
