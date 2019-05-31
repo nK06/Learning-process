@@ -1,0 +1,52 @@
+spring:
+  thymeleaf:
+    cache: false
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: utf-8
+    mode: HTML5
+  #druid:
+  datasource:
+    url: jdbc:mysql://192.168.139.129:3306/seckill?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false
+    username: root
+    password: root1234
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+#mybatis
+mybatis:
+  type-aliases-package: com.panther.seckill.model
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 100
+    default-statement-timeout: 3000
+  mapper-locations: classpath:com/panther/seckill/dao/*.xml
+
+redis:
+  host: 192.168.139.129
+  port: 6379
+  timeout: 3
+  password: 123456
+  poolMaxTotal: 10
+  poolMaxIdle: 10
+  poolMaxWait: 3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
