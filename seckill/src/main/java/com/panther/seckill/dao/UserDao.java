@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface UserDao {
@@ -14,4 +15,6 @@ public interface UserDao {
     
     @Insert("insert into user(id,nickname)values(#{id},#(nickname))")
     public int insertUser(User user);
+    @Update("update user set password = #{password} where id = #{id}")
+    public int  update(User updateUser);
 }

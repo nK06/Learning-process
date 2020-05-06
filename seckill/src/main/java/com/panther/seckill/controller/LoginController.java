@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 /**
@@ -37,14 +38,14 @@ public class LoginController {
     
     @RequestMapping("/login/do_login")
     @ResponseBody
-    public Result<Boolean> toLogin(@Valid LoginVo loginVo){
+    public Result<Boolean> toLogin(HttpServletResponse response, @Valid LoginVo loginVo){
         //if(StringUtils.isEmpty(loginVo.getPassword())){
         //    return Result.error(CodeMsg.PASSWORD_EMPTY);
         //}
         //if(!ValidatorUtil.isMobile(loginVo.getMobile())){
         //    return Result.error(CodeMsg.MOBILE_ERROR);
         //}
-        userService.login(loginVo);
+        userService.login(response,loginVo);
         return Result.success(true);
     }
 }

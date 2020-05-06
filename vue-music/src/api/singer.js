@@ -65,7 +65,7 @@ export function getMusicPurl(songmId) {
   const data = Object.assign({}, commonParams, {
     hostUin: 0,
     format: 'json',
-    platform: 'yqq',
+    platform: 'yqq.json',
     loginUin: 0,
     needNewCode: 0,
     guid: '2473435457',

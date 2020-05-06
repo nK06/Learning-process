@@ -80,6 +80,27 @@ public class RedisService {
     }
 
     /**
+     * 删除一个key
+     * @param keyPrefix
+     * @param key
+     * @param <T>
+     * @return
+     */
+
+    public <T> boolean delete(KeyPrefix keyPrefix ,String key){
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            // 生成存入Redis的KEY
+            String realKey = keyPrefix.getPrefix() + key;
+            long ret = jedis.del(realKey);
+            return ret > 0;
+        }finally {
+            returnToPool(jedis);
+        }
+    }
+
+    /**
      * 增加值
      * @param keyPrefix
      * @param key
@@ -117,7 +138,7 @@ public class RedisService {
         }
     }
 
-    private <T> String beanToString(T value) {
+    public static <T> String beanToString(T value) {
         if(value == null){
             return null;
         }
@@ -134,7 +155,7 @@ public class RedisService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T stringToBean(String s, Class<T> clazz) {
+    public static <T> T stringToBean(String s, Class<T> clazz) {
         if(StringUtils.isEmpty(s)|| clazz == null){
             return null;
         }
